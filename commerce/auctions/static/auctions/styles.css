@@ -1,0 +1,21 @@
+body {
+    padding: 10px;
+}
+
+#submit_btn_list {
+    text-align:left;
+}
+
+#user {
+    position: absolute;
+    top:0;
+    right:0;
+}
+
+#products {
+    bottom:0px;
+}
+
+#auction_product {
+    height:400px;
+}

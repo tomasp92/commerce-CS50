@@ -1,0 +1,17 @@
+{% extends "auctions/layout.html" %}
+{% load static %}
+{% block body %}
+    <h3> Categories:</h3>
+    <div class="sidebar col-5">
+    </div>
+    <div class="main col-7">
+        <div class="container" style="margin-left:40%">
+            {% for category in categories %}
+                <div>
+                    <a href="listing/{{ category.category_name }}">{{ category.category_name }}</a>
+                </div><br>
+            {% endfor %}
+        </div>
+    </div>
+        
+{% endblock %}

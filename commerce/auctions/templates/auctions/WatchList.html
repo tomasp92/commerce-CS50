@@ -1,0 +1,44 @@
+{% extends "auctions/layout.html" %}
+{% load static %}
+{% block body %}
+    {% if category %}
+        <h2>{{ category }}</h2>
+    {% elif messege %}
+        <h2>Active Listings</h2>
+        <h4>{{ messege }}</h4>
+    {% else %}
+        <h2>Active Listings</h2>
+    {% endif %}
+
+    <div id="products">
+        <ul>
+            {% for auction in auctions %}
+                <div class="container">
+                    <li id="product"> 
+                        <div class= "row">
+                            <div class="col-1"></div>
+                            <div class="col-5">
+                                <div style="text-align:center;">
+                                    <img class="border" src="{{ auction.auction_image }}">
+                                </div>
+                            </div>
+                            <div class="col-5">
+                                    <h3><a href="{% url 'listing' user.id auction.id %}">{{ auction.product_name }}</a></h3><br>
+                                <div>
+                                    Current price: {{ auction.starting_bid }} U$S   
+                                </div><br><br>
+                                <div>
+                                    {{ auction.description }}
+                                </div><br><br>
+                            <div class="col-1"></div>
+                        </div>
+                    </li>
+                </div>
+            {% empty %}
+                <li>No auctions in your watch list</li>
+            {% endfor %}
+            
+        </ul>
+    </div>
+    
+{% endblock %}

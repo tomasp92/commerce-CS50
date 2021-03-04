@@ -1,0 +1,124 @@
+{% extends "auctions/layout.html" %}
+{% load static %}
+{% block body %}
+    <div class="container">
+        {% if user.is_authenticated %}
+            <form action="{% url 'AddToWatchList' %}" method="post">
+                {% csrf_token %}
+                <div>
+                    <input name="usersname" type="hidden" value="{{ user.username }}">
+                    <input name="auctionid" type="hidden" value="{{ auction.id }}"> 
+                </div>
+                <input type="submit" class="btn btn-outline-primary" value="{{ submit }}" style="position:absolute; top:0; right:0;background-color:blue;"> 
+                </input>
+            </form>
+        {% endif %}
+        
+        <div id= "auction_product" class= "row">
+            <div class="col-1"></div>
+            <div class="col-5">
+                <img class="border" src="{{ image }}">
+            </div>
+            <div class="col-5">
+                <h2>{{ auction.product_name }}</h2><br><br>
+                <div>
+                    Starting Bid: {{ auction.starting_bid }} U$S <br>
+                    Current price: {{ current_price }} U$S
+                </div><br><br>
+                {% if user.id == auction.seller.id %}
+                    <div>
+                        <form action="{% url 'CloseAuction' %}" method="post">
+                            {% csrf_token %}
+                                <input name="user" type="hidden" value="{{ user.username }}">
+                                <input name="auctionid" type="hidden" value="{{ auction.id }}"> 
+                                <div class="input-group-append">
+                                    <input class="btn btn-outline-secondary" type="submit" id="button-addon3" value="Close Auction" Style="background-color:goldenrod" >
+                                </div> 
+                        </form><br><br>
+                    </div>
+                {% else %}
+                    <div>
+                        <div>
+                            {% if user.id == bid.current_buyer.id %}
+                                {% if bid.winner %}
+                                    <h3> <strong> Congratulations: You won the auction! </strong> </h3>
+                                {% else %}
+                                    <strong> You were the last to bid! </strong>
+                                {% endif %}
+                                {% elif auction.sold%}
+                                    <strong> This auction was sold! </strong>
+                            {% endif %}
+                        </div>
+                        {% if not auction.sold %}
+                            <div>
+                                <form action="{% url 'NewBid' %}" method="post">
+                                    {% csrf_token %}
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                          <span class="input-group-text">$</span>
+                                          <span class="input-group-text">0.00</span>
+                                        </div>
+                                        <input name="user" type="hidden" value="{{ user.username }}">
+                                        <input name="auctionid" type="hidden" value="{{ auction.id }}"> 
+                                            <input type="number" min="{{ current_price }}" name="newbid" 
+                                            class="form-control" aria-label="Dollar amount (with dot and two decimal places)">
+                                        <div class="input-group-append">
+                                            <input class="btn btn-outline-secondary" type="submit" id="button-addon2" value="Make Bid">
+                                        </div> 
+                                    </div>
+                                </form><br><br>
+                            </div>
+                                   
+                        {% endif %}
+                    </div>
+                {% endif %}
+
+                <div>
+                    {{ auction.description }}
+                </div><br><br><br>
+                {% if auction.category_name %}
+                    <div>
+                        <a href="{% url 'category' auction.category_name %}" >{{ auction.category_name }}</a>
+                    </div><br><br><br>
+                {% endif %}
+            </div>
+            <div class="col-1"></div>
+        </div>
+    </div><br><br>
+    <div id="coments"  name="coments">
+        <table class="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col">Comments:</th>
+              </tr>
+            </thead>
+            <tbody>
+                {% for coment in coments %}
+                    <tr>
+                        <th scope="row">{{ coment.user}}</th>
+                        <td>{{ coment.text }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td>No coments made to this post</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div id="comentform">
+            <form action="{% url 'addcoment' %}" method="post">
+                {% csrf_token %}
+                <div class="input-group mb-3">
+                    <input name="username" type="hidden" value="{{ user.username }}">
+                    <input name="auction" type="hidden" value="{{ auction.id }}">
+                    <label class="input-group-text" for="inputGroupSelect01"><strong>{{ user.username }}</strong></label>
+                    <input type="text" name="commenttext" class="form-control" placeholder="Add a coment" 
+                    aria-label="Recipient's username" aria-describedby="button-addon2">
+                    <div class="input-group-append">
+                        <input class="btn btn-outline-secondary" type="submit" id="button-addon2" value="Publish">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>    
+{% endblock %}
